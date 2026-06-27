@@ -45,6 +45,10 @@ insert_count = 4;        // number of inserts
 boss_dia     = 13;       // outer diameter of the boss around each insert
 insert_clear = 0.0;      // extra diameter clearance on the hole (e.g. 0.2)
 
+// Reinforcing rib: a straight vertical wall from each insert boss running
+// radially out to the outer dome diameter, for extra strength.
+rib_thick    = 4;        // wall thickness
+
 // Resolution
 $fn = 200;
 
@@ -117,6 +121,19 @@ module boss_solid() {
     }
 }
 
+// Reinforcing ribs: a 'rib_thick' wide vertical wall from each boss out to
+// the outer edge (r = R). Trimmed by the skin and stands on the bottom plane.
+module rib_solid() {
+    for (i = [0 : insert_count - 1]) {
+        a  = 45 + i * (360 / insert_count);
+        x0 = insert_pos - boss_dia / 2;          // start inside the boss
+        L  = R - x0;                             // out to the outer diameter
+        rotate([0, 0, a])
+            translate([x0, -rib_thick / 2, 0])
+                cube([L, rib_thick, H + dome_height + 6]);
+    }
+}
+
 // The insert holes, drilled up from the bottom plane (z = 0).
 module insert_holes() {
     for (i = [0 : insert_count - 1]) {
@@ -137,9 +154,12 @@ module garden_light_cap() {
                 outer_solid();
                 cavity();
             }
-            // add the insert bosses, trimmed to stay under the outer skin
+            // add the insert bosses + reinforcing ribs, trimmed to the skin
             intersection() {
-                boss_solid();
+                union() {
+                    boss_solid();
+                    rib_solid();
+                }
                 outer_solid();
             }
         }
