@@ -38,7 +38,7 @@ shoulder_fillet = 22;
 dome_height     = 2;
 
 // ---- Heat-set copper inserts ----
-insert_pos   = 68;       // distance from centre to each insert
+insert_pos   = 67;       // distance from centre to each insert
 insert_dia   = 7;        // insert / hole diameter
 insert_depth = 10;       // insert / hole depth
 insert_count = 4;        // number of inserts
